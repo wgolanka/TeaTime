@@ -11,59 +11,37 @@ import javax.servlet.http.HttpServletResponse
 
 @CrossOrigin(origins = ["http://localhost:3000", "http://localhost:3000/#"], maxAge = 3600)
 @Controller
-class UserController(val userService: UserService, val personRepository: PersonRepository) {
+class UserController(val userService: UserService, val userRepository: UserRepository) {
 
-    /**
-     *
-     * @param name String
-     * @param surname String
-     * @param emailAddress String
-     * @param phoneNumber String
-     * @param response HttpServletResponse
-     */
-    @PutMapping(value = ["/add/user"])
-    fun addNewUser(@RequestParam(required = true) name: String,
-                   @RequestParam(required = true) surname: String,
+    @PutMapping(value = ["/user/add"])
+    fun addNewUser(@RequestParam(required = true) nickname: String,
+                   @RequestParam(required = true) avatar: ByteArray,
+                   @RequestParam(required = true) description: String,
                    @RequestParam(required = true) emailAddress: String,
-                   @RequestParam(required = true) phoneNumber: String, response: HttpServletResponse) {
+                   response: HttpServletResponse) {
 
-        if (personRepository.findAll().stream().noneMatch { brewer -> brewer.emailAddress == emailAddress }) {
-            val newBrewer = User(name, surname, null, LocalDate.now(),
-                    emailAddress, phoneNumber, mutableSetOf())
-            personRepository.save(newBrewer)
+        if (userRepository.findAll().stream().noneMatch { brewer -> brewer.emailAddress == emailAddress }) {
+            val newBrewer = User(nickname, avatar, LocalDate.now(), description, emailAddress)
+            userRepository.save(newBrewer)
         }
     }
 
-    /**
-     *
-     * @return ResponseEntity<Set<Person>>
-     */
     @GetMapping(value = ["/users"])
-    fun getUsers(): ResponseEntity<MutableList<Person>> {
-        val all = personRepository.findAll()
+    fun getUsers(): ResponseEntity<MutableList<User>> {
+        val all = userRepository.findAll()
         return ok(all)
     }
 
-    /**
-     *
-     * @param id String
-     * @return ResponseEntity<MutableSet<Brew>>
-     */
-    @GetMapping("/person/teas")
+    @GetMapping("/user/teas")
     fun getTeaExtent(@RequestParam(required = true) id: String): ResponseEntity<MutableSet<Tea>> { //TODO
-        val person = personRepository.findByIdIs(UUID.fromString(id))
-        return ok(person.createdBrews)
+        val person = userRepository.findByIdIs(UUID.fromString(id))
+        return ok(person.createdTeas)
     }
 
-    fun getAll(): MutableList<Person> {
-        return personRepository.findAll()
+    fun getAll(): MutableList<User> {
+        return userRepository.findAll()
     }
 
-    /**
-     *
-     * @param uuid UUID
-     * @param response HttpServletResponse
-     */
     @PutMapping(value = ["/setCurrentUser"])
     @ResponseBody
     fun setCurrentUser(@RequestParam(required = true) uuid: UUID, response: HttpServletResponse) {

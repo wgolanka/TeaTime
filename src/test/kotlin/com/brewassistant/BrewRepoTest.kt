@@ -1,7 +1,7 @@
 package com.brewassistant
 
-import com.brewassistant.domain.tea.BrewRepository
-import com.brewassistant.domain.user.PersonRepository
+import com.brewassistant.domain.tea.TeaRepository
+import com.brewassistant.domain.user.UserRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,8 +10,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
-class BrewRepoTest(@Autowired val repository: BrewRepository,
-                   @Autowired val personRepository: PersonRepository) {
+class BrewRepoTest(@Autowired val repository: TeaRepository,
+                   @Autowired val userRepository: UserRepository) {
     //todo make test connect to test db
     @Test
     fun `Get all brews by author id`() {

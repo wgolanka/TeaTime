@@ -3,7 +3,6 @@ package com.brewassistant.domain.accessory
 import com.brewassistant.domain.tea.Tea
 import com.brewassistant.orm.AbstractJpaPersistable
 import java.io.Serializable
-import java.util.*
 import javax.persistence.Entity
 import javax.persistence.ManyToMany
 
@@ -33,6 +32,6 @@ class Accessory(private var name: String,
 
     override fun toString(): String {
         return "Accessory(name='$name', priceRange='$priceRange', description='$description', " +
-                "image=${Arrays.toString(image)}, isNecessary=$isNecessary, brews=$brews)"
+                ", isNecessary=$isNecessary, brews=$brews)"
     }
 }

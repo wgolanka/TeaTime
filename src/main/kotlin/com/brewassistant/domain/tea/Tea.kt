@@ -20,7 +20,7 @@ class Tea(var name: String,
           var author: User,
 
           @OneToOne
-          val teaConfig: TeaConfiguration) : AbstractJpaPersistable<Tea>(), Serializable {
+          val brewingConfig: BrewingConfiguration) : AbstractJpaPersistable<Tea>(), Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER)
     val accessories = mutableSetOf<Accessory>()
@@ -60,7 +60,7 @@ class Tea(var name: String,
     override fun toString(): String {
         return "Tea(name='$name', created=$created, imageLink=$imageLink, originCountry='$originCountry', " +
                 "caffeineContent=$caffeineContent, harvestSeasons=$harvestSeasons, author=${author.nickname}, " +
-                "teaConfig=$teaConfig, accessories=$accessories, maxAccessories=$maxAccessories)"
+                "teaConfig=$brewingConfig, accessories=$accessories, maxAccessories=$maxAccessories)"
     }
 
 }

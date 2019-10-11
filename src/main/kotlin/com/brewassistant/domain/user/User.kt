@@ -14,7 +14,7 @@ import javax.persistence.OneToMany
 class User(var nickname: String,
            var avatar: ByteArray?,
            val accountCreated: LocalDate,
-           val description: String,
+           val description: String?,
            var emailAddress: String?) : AbstractJpaPersistable<User>(), Serializable {
 
     @JsonBackReference
