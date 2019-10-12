@@ -24,5 +24,11 @@ class TeaController(private val teaService: TeaService) {
         val all = teaService.getAll()
         return ok(all)
     }
+
+    @PutMapping("/edit")
+    fun getEditTea(@RequestBody(required = false) teaObject: Tea): ResponseEntity.BodyBuilder {
+        teaService.update(teaObject)
+        return ok()
+    }
 }
 

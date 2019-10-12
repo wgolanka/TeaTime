@@ -21,10 +21,10 @@ class Tea(var name: String,
           var author: BaseUser,
 
           @OneToOne
-          val brewingConfig: BrewingConfiguration) : AbstractJpaPersistable<Tea>(), Serializable {
+          var brewingConfig: BrewingConfiguration) : AbstractJpaPersistable<Tea>(), Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER)
-    val accessories = mutableSetOf<Accessory>()
+    var accessories = mutableSetOf<Accessory>()
 
     private val maxAccessories = 5
 
