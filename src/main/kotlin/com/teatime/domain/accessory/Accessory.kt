@@ -7,31 +7,31 @@ import javax.persistence.Entity
 import javax.persistence.ManyToMany
 
 @Entity
-class Accessory(private var name: String,
-                private var priceRange: String,
-                private var description: String,
-                private var imageLink: String?,
-                private var isNecessary: Boolean) : Serializable, AbstractJpaPersistable<Accessory>() {
+class Accessory(var name: String,
+                var priceRange: String,
+                var description: String,
+                var imageLink: String?,
+                var isNecessary: Boolean) : Serializable, AbstractJpaPersistable<Accessory>() {
 
     @ManyToMany
-    private var brews: MutableSet<Tea> = mutableSetOf()
+    var teas: MutableSet<Tea> = mutableSetOf()
 
     fun addTea(tea: Tea) {
-        if (!brews.contains(tea)) {
-            brews.add(tea)
+        if (!teas.contains(tea)) {
+            teas.add(tea)
             tea.addAccessory(this)
         }
     }
 
     fun removeTea(tea: Tea) {
-        if (brews.contains(tea)) {
-            brews.remove(tea)
+        if (teas.contains(tea)) {
+            teas.remove(tea)
             tea.removeAccessory(this)
         }
     }
 
     override fun toString(): String {
         return "Accessory(name='$name', priceRange='$priceRange', description='$description', " +
-                ", isNecessary=$isNecessary, brews=$brews)"
+                ", isNecessary=$isNecessary, teas=$teas)"
     }
 }

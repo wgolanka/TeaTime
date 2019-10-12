@@ -5,33 +5,41 @@ import org.springframework.http.ResponseEntity.ok
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import java.util.*
 import javax.servlet.http.HttpServletResponse
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Size
 
 @CrossOrigin(origins = ["http://localhost:3000", "http://localhost:3000/#"], maxAge = 3600)
 @Controller
 @Validated
 @RequestMapping("/accessory")
-class AccessoryController(val accessoryRepository: AccessoryRepository) {
+class AccessoryController(val accessoryService: AccessoryService) {
 
 
     @PostMapping(value = ["/add"])
-    fun addAccessory(@RequestParam(required = true) @NotBlank name: String,
-                     @RequestParam(required = true) @NotNull priceRange: String,
-                     @RequestParam(required = true) @NotBlank @Size(max = 100) description: String,
-                     @RequestParam(required = true) @NotBlank imageLink: String,
-                     @RequestParam(required = true) @NotBlank isNecessary: Boolean,
+    fun addAccessory(@RequestBody(required = true) accessory: Accessory,
                      response: HttpServletResponse) {
 
-        accessoryRepository.save(Accessory(name, priceRange, description, imageLink, isNecessary))
+        accessoryService.add(Accessory(accessory.name, accessory.priceRange,
+                accessory.description, accessory.imageLink, accessory.isNecessary))
     }
-
 
     @GetMapping("/all")
     fun getAllAccessories(): ResponseEntity<List<Accessory>> {
-        return ok(accessoryRepository.getAllByIdIsNotNull())
+        return ok(accessoryService.getAll())
+    }
+
+    @PutMapping(value = ["/edit"])
+    fun editAccessory(@RequestBody(required = true) accessory: Accessory,
+                      response: HttpServletResponse) {
+
+        accessoryService.edit(accessory)
+    }
+
+    @DeleteMapping(value = ["/delete"])
+    fun removeAccessory(@RequestParam(required = true) accessoryId: UUID,
+                        response: HttpServletResponse) {
+
+        accessoryService.remove(accessoryId)
     }
 }
 
