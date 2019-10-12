@@ -1,4 +1,4 @@
-package com.brewassistant.data
+package com.teatime.data
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

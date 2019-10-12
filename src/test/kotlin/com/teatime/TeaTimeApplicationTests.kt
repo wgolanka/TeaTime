@@ -1,4 +1,4 @@
-package com.brewassistant
+package com.teatime
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
 @SpringBootTest
-class BrewFriendApplicationTests {
+class TeaTimeApplicationTests {
 
 	@Test
 	fun contextLoads() {

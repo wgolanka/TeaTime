@@ -1,7 +1,7 @@
-package com.brewassistant.domain.accessory
+package com.teatime.domain.accessory
 
-import com.brewassistant.domain.tea.Tea
-import com.brewassistant.orm.AbstractJpaPersistable
+import com.teatime.domain.tea.Tea
+import com.teatime.orm.AbstractJpaPersistable
 import java.io.Serializable
 import javax.persistence.Entity
 import javax.persistence.ManyToMany

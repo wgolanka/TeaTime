@@ -1,6 +1,6 @@
-package com.brewassistant.domain
+package com.teatime.domain
 
-import com.brewassistant.orm.AbstractJpaPersistable
+import com.teatime.orm.AbstractJpaPersistable
 import java.io.Serializable
 
 abstract class Base : Serializable, AbstractJpaPersistable<Base>() {

@@ -1,8 +1,9 @@
-package com.brewassistant.domain.tea
+package com.teatime.domain.tea
 
-import com.brewassistant.domain.accessory.Accessory
-import com.brewassistant.domain.user.User
-import com.brewassistant.orm.AbstractJpaPersistable
+import com.teatime.domain.accessory.Accessory
+import com.teatime.domain.tea.config.BrewingConfiguration
+import com.teatime.domain.user.BaseUser
+import com.teatime.orm.AbstractJpaPersistable
 import java.io.Serializable
 import java.time.LocalDate
 import javax.persistence.*
@@ -17,7 +18,7 @@ class Tea(var name: String,
 
           @ManyToOne
           @JoinColumn(name = "user_id", nullable = false)
-          var author: User,
+          var author: BaseUser,
 
           @OneToOne
           val brewingConfig: BrewingConfiguration) : AbstractJpaPersistable<Tea>(), Serializable {
@@ -31,14 +32,14 @@ class Tea(var name: String,
         author.addCreatedTea(this)
     }
 
-    fun setTeaAuthor(user: User) {
-        if (author == user) {
+    fun setTeaAuthor(baseUser: BaseUser) {
+        if (author == baseUser) {
             return
         }
-        //author is never nullable
+
         author.removeTea(this)
 
-        author = user
+        author = baseUser
         author.addCreatedTea(this)
     }
 
@@ -58,9 +59,10 @@ class Tea(var name: String,
     }
 
     override fun toString(): String {
-        return "Tea(name='$name', created=$created, imageLink=$imageLink, originCountry='$originCountry', " +
-                "caffeineContent=$caffeineContent, harvestSeasons=$harvestSeasons, author=${author.nickname}, " +
-                "teaConfig=$brewingConfig, accessories=$accessories, maxAccessories=$maxAccessories)"
+        return "Tea(name='$name', created=$created, imageLink=$imageLink, originCountry='$originCountry'," +
+                " caffeineContent=$caffeineContent, harvestSeasons=$harvestSeasons, author=$author, " +
+                "brewingConfig=$brewingConfig, accessories=$accessories, maxAccessories=$maxAccessories)"
     }
+
 
 }

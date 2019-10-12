@@ -1,4 +1,4 @@
-package com.brewassistant.orm
+package com.teatime.orm
 
 import org.springframework.data.util.ProxyUtils
 import java.io.Serializable

@@ -1,4 +1,4 @@
-package com.brewassistant.domain.accessory
+package com.teatime.domain.accessory
 
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok

@@ -1,8 +1,8 @@
-package com.brewassistant.domain.user
+package com.teatime.domain.user
 
-import com.brewassistant.domain.tea.Tea
-import com.brewassistant.orm.AbstractJpaPersistable
 import com.fasterxml.jackson.annotation.JsonBackReference
+import com.teatime.domain.tea.Tea
+import com.teatime.orm.AbstractJpaPersistable
 import java.io.Serializable
 import java.time.LocalDate
 import javax.persistence.CascadeType
@@ -11,11 +11,11 @@ import javax.persistence.FetchType
 import javax.persistence.OneToMany
 
 @Entity
-class User(var nickname: String,
-           var avatar: ByteArray?,
-           val accountCreated: LocalDate,
-           val description: String?,
-           var emailAddress: String?) : AbstractJpaPersistable<User>(), Serializable {
+class BaseUser(var nickname: String,
+               var avatar: ByteArray?,
+               val accountCreated: LocalDate,
+               val description: String?,
+               var emailAddress: String?) : AbstractJpaPersistable<BaseUser>(), Serializable {
 
     @JsonBackReference
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "author")

@@ -1,7 +1,7 @@
-package com.brewassistant
+package com.teatime
 
-import com.brewassistant.domain.tea.TeaRepository
-import com.brewassistant.domain.user.UserRepository
+import com.teatime.domain.tea.TeaRepository
+import com.teatime.domain.user.UserRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,13 +10,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
-class BrewRepoTest(@Autowired val repository: TeaRepository,
-                   @Autowired val userRepository: UserRepository) {
+class TeaRepoTest(@Autowired val repository: TeaRepository,
+                  @Autowired val userRepository: UserRepository) {
     //todo make test connect to test db
     @Test
     fun `Get all brews by author id`() {
-//        val person = Brewer("Sadie", "Adler", ByteArray(1), LocalDate.now(),
-//                "sadie.adler@gmail.com", "556553729", mutableSetOf())
+//        val person = BaseUser("SadieAdler", ByteArray(1), LocalDate.now(), "I'm Sadie!",
+//                "sadie.adler@gmail.com")
 
 //        val brew = Tea("Green", "",
 //                "", person, "", 0.0)
@@ -24,7 +24,7 @@ class BrewRepoTest(@Autowired val repository: TeaRepository,
 //        val hashCodeBefore = brew.hashCode()
 //
 //        repository.save(brew)
-//        personRepository.save(person)
+//        userRepository.save(person)
 //
 //        val hashCodeAfter = brew.hashCode()
 //        assertThat(person.createdBrews).contains(brew)

@@ -1,6 +1,6 @@
-package com.brewassistant.domain.user
+package com.teatime.domain.user
 
-import com.brewassistant.domain.tea.Tea
+import com.teatime.domain.tea.Tea
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.stereotype.Controller
@@ -22,13 +22,13 @@ class UserController(val userService: UserService, val userRepository: UserRepos
                    response: HttpServletResponse) {
 
         if (userRepository.findAll().stream().noneMatch { brewer -> brewer.emailAddress == emailAddress }) {
-            val newUser = User(nickname, avatar, LocalDate.now(), description, emailAddress)
+            val newUser = BaseUser(nickname, avatar, LocalDate.now(), description, emailAddress)
             userRepository.save(newUser)
         }
     }
 
     @GetMapping(value = ["/all"])
-    fun getUsers(): ResponseEntity<MutableList<User>> {
+    fun getUsers(): ResponseEntity<MutableList<BaseUser>> {
         val all = userRepository.findAll()
         return ok(all)
     }
@@ -39,7 +39,7 @@ class UserController(val userService: UserService, val userRepository: UserRepos
         return ok(person.createdTeas)
     }
 
-    fun getAll(): MutableList<User> {
+    fun getAll(): MutableList<BaseUser> {
         return userRepository.findAll()
     }
 
