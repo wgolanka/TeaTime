@@ -11,9 +11,10 @@ import javax.servlet.http.HttpServletResponse
 
 @CrossOrigin(origins = ["http://localhost:3000", "http://localhost:3000/#"], maxAge = 3600)
 @Controller
+@RequestMapping("/user")
 class UserController(val userService: UserService, val userRepository: UserRepository) {
 
-    @PutMapping(value = ["/user/add"])
+    @PutMapping(value = ["/add"])
     fun addNewUser(@RequestParam(required = true) nickname: String,
                    @RequestParam(required = true) avatar: ByteArray,
                    @RequestParam(required = true) description: String,
@@ -21,19 +22,19 @@ class UserController(val userService: UserService, val userRepository: UserRepos
                    response: HttpServletResponse) {
 
         if (userRepository.findAll().stream().noneMatch { brewer -> brewer.emailAddress == emailAddress }) {
-            val newBrewer = User(nickname, avatar, LocalDate.now(), description, emailAddress)
-            userRepository.save(newBrewer)
+            val newUser = User(nickname, avatar, LocalDate.now(), description, emailAddress)
+            userRepository.save(newUser)
         }
     }
 
-    @GetMapping(value = ["/users"])
+    @GetMapping(value = ["/all"])
     fun getUsers(): ResponseEntity<MutableList<User>> {
         val all = userRepository.findAll()
         return ok(all)
     }
 
-    @GetMapping("/user/teas")
-    fun getTeaExtent(@RequestParam(required = true) id: String): ResponseEntity<MutableSet<Tea>> { //TODO
+    @GetMapping("/teas")
+    fun getUserTeas(@RequestParam(required = true) id: String): ResponseEntity<MutableSet<Tea>> { //TODO
         val person = userRepository.findByIdIs(UUID.fromString(id))
         return ok(person.createdTeas)
     }
@@ -42,7 +43,7 @@ class UserController(val userService: UserService, val userRepository: UserRepos
         return userRepository.findAll()
     }
 
-    @PutMapping(value = ["/setCurrentUser"])
+    @PutMapping(value = ["/setCurrent"])
     @ResponseBody
     fun setCurrentUser(@RequestParam(required = true) uuid: UUID, response: HttpServletResponse) {
         val exist = getAll().stream().anyMatch { user -> user.getId() == uuid }

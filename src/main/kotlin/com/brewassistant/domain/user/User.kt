@@ -21,15 +21,15 @@ class User(var nickname: String,
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "author")
     val createdTeas: MutableSet<Tea> = mutableSetOf()
 
-    fun addCreatedBrew(tea: Tea) {
+    fun addCreatedTea(tea: Tea) {
         if (!createdTeas.contains(tea)) {
             createdTeas.add(tea)
 
-            tea.setBrewAuthor(this)
+            tea.setTeaAuthor(this)
         }
     }
 
-    fun removeBrew(tea: Tea) {
+    fun removeTea(tea: Tea) {
         createdTeas.remove(tea)
     }
 }

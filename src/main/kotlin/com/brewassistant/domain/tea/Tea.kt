@@ -28,18 +28,18 @@ class Tea(var name: String,
     private val maxAccessories = 5
 
     init {
-        author.addCreatedBrew(this)
+        author.addCreatedTea(this)
     }
 
-    fun setBrewAuthor(user: User) {
+    fun setTeaAuthor(user: User) {
         if (author == user) {
             return
         }
         //author is never nullable
-        author.removeBrew(this)
+        author.removeTea(this)
 
         author = user
-        author.addCreatedBrew(this)
+        author.addCreatedTea(this)
     }
 
     fun addAccessory(accessory: Accessory) {
