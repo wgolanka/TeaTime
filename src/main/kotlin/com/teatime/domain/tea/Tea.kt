@@ -20,10 +20,10 @@ class Tea(var name: String,
           @JoinColumn(name = "user_id", nullable = false)
           var author: BaseUser,
 
-          @OneToOne
-          var brewingConfig: BrewingConfiguration) : AbstractJpaPersistable<Tea>(), Serializable {
+          @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
+          var brewingConfig: BrewingConfiguration?) : AbstractJpaPersistable<Tea>(), Serializable {
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST])
     var accessories = mutableSetOf<Accessory>()
 
     private val maxAccessories = 5
@@ -61,7 +61,7 @@ class Tea(var name: String,
     override fun toString(): String {
         return "Tea(name='$name', created=$created, imageLink=$imageLink, originCountry='$originCountry'," +
                 " caffeineContent=$caffeineContent, harvestSeasons=$harvestSeasons, author=$author, " +
-                "brewingConfig=$brewingConfig, accessories=$accessories, maxAccessories=$maxAccessories)"
+                "brewingConfig=$brewingConfig, accessories=${accessories.size}, maxAccessories=$maxAccessories)"
     }
 
 

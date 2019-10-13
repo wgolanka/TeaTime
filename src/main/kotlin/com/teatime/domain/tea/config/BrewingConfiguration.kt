@@ -10,6 +10,7 @@ class BrewingConfiguration(var brewingTime: String,
                            var drinkingTime: ArrayList<String>,
                            var isDifficultToMake: Boolean,
                            var description: String) : AbstractJpaPersistable<BrewingConfiguration>(), Serializable {
+
     override fun toString(): String {
         return "BrewingConfiguration(brewingTime='$brewingTime', ingredients=$ingredients, drinkingTime=$drinkingTime," +
                 " isDifficultToMake=$isDifficultToMake, description='$description')"

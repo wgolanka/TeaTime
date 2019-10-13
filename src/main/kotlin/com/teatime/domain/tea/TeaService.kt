@@ -1,15 +1,18 @@
 package com.teatime.domain.tea
 
+import com.teatime.domain.accessory.AccessoryRepository
 import com.teatime.domain.tea.config.BrewingConfigRepository
 import com.teatime.domain.tea.config.BrewingConfiguration
 import com.teatime.domain.user.UserService
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.util.*
 
 @Service
 class TeaService(private val userService: UserService,
                  private val teaRepository: TeaRepository,
-                 private val brewingConfigRepository: BrewingConfigRepository) {
+                 private val brewingConfigRepository: BrewingConfigRepository,
+                 private val accessoryRepository: AccessoryRepository) {
 
     fun add(tea: Tea, brewingConfig: BrewingConfiguration) {
         brewingConfigRepository.saveAndFlush(brewingConfig)
@@ -46,7 +49,7 @@ class TeaService(private val userService: UserService,
     fun updateTeaFields(tea: Tea, updated: Tea): Tea {
         tea.name = updated.name
         tea.accessories = if (updated.accessories == null) mutableSetOf() else updated.accessories
-        tea.brewingConfig = updateTeaBrewingConfigFields(tea.brewingConfig, updated.brewingConfig)
+        tea.brewingConfig = updateTeaBrewingConfigFields(tea.brewingConfig!!, updated.brewingConfig!!) //todo null?
         tea.caffeineContent = updated.caffeineContent
         tea.harvestSeasons = updated.harvestSeasons
         tea.imageLink = updated.imageLink
@@ -61,5 +64,33 @@ class TeaService(private val userService: UserService,
         configuration.ingredients = updated.ingredients
         configuration.isDifficultToMake = updated.isDifficultToMake
         return configuration
+    }
+
+    fun addAccessory(teaId: UUID, accessoryId: UUID) {
+        val accessory = accessoryRepository.getByIdEquals(accessoryId)
+        val tea = teaRepository.getTeaByIdEquals(teaId)
+
+        if (accessory == null || tea == null) {
+            return
+        }
+
+        tea.addAccessory(accessory)
+        teaRepository.save(tea)
+    }
+
+    fun delete(teaId: UUID) {
+        val tea = teaRepository.getTeaByIdEquals(teaId) ?: return
+        tea.accessories.removeAll(tea.accessories)
+        teaRepository.delete(tea)
+//        val accessoriesIterator = teaAccessories.iterator()
+//        var next: Accessory
+//        while (accessoriesIterator.hasNext()){
+//            next = accessoriesIterator.next()
+//            next.removeTea(tea)
+//        }
+//        if(tea.accessories.isEmpty()){
+//            accessoryRepository.saveAll(teaAccessories)
+//            teaRepository.deleteByIdEquals(teaId)
+//        }
     }
 }

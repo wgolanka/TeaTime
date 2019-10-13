@@ -39,7 +39,7 @@ class AccessoryController(val accessoryService: AccessoryService) {
     fun removeAccessory(@RequestParam(required = true) accessoryId: UUID,
                         response: HttpServletResponse) {
 
-        accessoryService.remove(accessoryId)
+        accessoryService.remove(accessoryId) //TODO does it work ?
     }
 }
 

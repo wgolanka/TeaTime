@@ -8,7 +8,7 @@ class UserService(private val userRepository: UserRepository) {
 
     fun getCurrentUser(): BaseUser {
 //        val jack = UUID.fromString("")
-        val sadie = UUID.fromString("e1405043-c77d-4612-a7d0-f2de256697d9") //default set user
+        val sadie = UUID.fromString("c4697741-e4fb-4ce7-8701-2f135e69c8cb") //default set user
         if (currentBaseUser == null) {
             setCurrentUser(sadie)
             return userRepository.findByIdIs(sadie)
