@@ -14,8 +14,8 @@ class TeaService(private val userService: UserService,
                  private val brewingConfigRepository: BrewingConfigRepository,
                  private val accessoryRepository: AccessoryRepository) {
 
-    fun add(tea: Tea, brewingConfig: BrewingConfiguration) {
-        brewingConfigRepository.saveAndFlush(brewingConfig)
+    fun add(tea: Tea) {
+//        brewingConfigRepository.saveAndFlush(brewingConfig)
 
         val user = userService.getCurrentUser()
         teaRepository.saveAndFlush(
@@ -27,7 +27,7 @@ class TeaService(private val userService: UserService,
                         tea.caffeineContent,
                         tea.harvestSeasons,
                         user,
-                        brewingConfig
+                        null
                 )
         )
     }

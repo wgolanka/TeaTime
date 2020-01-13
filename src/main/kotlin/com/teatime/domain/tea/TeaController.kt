@@ -1,56 +1,67 @@
 package com.teatime.domain.tea
 
+import com.teatime.domain.user.UserService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.ok
+import org.springframework.http.ResponseEntity.status
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 import java.util.*
-import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 
-@CrossOrigin(origins = ["http://localhost:3000", "http://localhost:3000/#"], maxAge = 3600)
+@CrossOrigin("*", maxAge = 3600)
 @Controller
 @Validated
 @RequestMapping("/tea")
 @Transactional
-class TeaController(private val teaService: TeaService) {
+class TeaController(private val teaService: TeaService, private val userService: UserService) {
 
 
     @PostMapping(value = ["/add"])
-    fun addTea(@RequestBody(required = false) teaObject: Tea, response: HttpServletResponse): ResponseEntity.BodyBuilder {
+    @ResponseStatus(HttpStatus.OK)
+    fun addTea(@RequestParam(required = true) name: String,
+               @RequestParam(required = true) originCountry: String,
+               @RequestParam(required = true) harvestSeason: String,
+               @RequestParam caffeineContent: Double,
+               @RequestParam(required = true) description: String,
+               @RequestParam imageLink: String) {
 
-        teaService.add(teaObject, teaObject.brewingConfig!!) //todo null?
-        return ok()
+        val baseUser = userService.getCurrentUser()
+        teaService.add(Tea(name, LocalDate.now(), imageLink, originCountry, caffeineContent,
+                harvestSeason, baseUser, null))
+        //TODO walidacja czy herbata o danej nazwie istnieje ? potem
     }
 
     @GetMapping("/all")
     fun getAllTeas(): ResponseEntity<List<Tea>> {
 
         val all = teaService.getAll()
-        return ok(all)
+        return status(HttpStatus.OK).body(all)
     }
 
     @PutMapping("/edit")
-    fun getEditTea(@RequestBody(required = false) teaObject: Tea): ResponseEntity.BodyBuilder {
+    @ResponseStatus(HttpStatus.OK)
+    fun getEditTea(@RequestBody(required = false) teaObject: Tea) {
 
         teaService.update(teaObject)
-        return ok()
     }
 
     @PutMapping("/accessory/add")
+    @ResponseStatus(HttpStatus.OK)
     fun addAccessory(@RequestParam(required = true) teaId: UUID,
-                     @RequestParam(required = true) accessoryId: UUID): ResponseEntity.BodyBuilder {
+                     @RequestParam(required = true) accessoryId: UUID) {
 
         teaService.addAccessory(teaId, accessoryId)
-        return ok()
     }
 
     @DeleteMapping("/delete")
-    fun deleteTea(@RequestParam(required = true) teaId: UUID): ResponseEntity.BodyBuilder {
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteTea(@RequestParam(required = true) teaId: UUID) {
 
         teaService.delete(teaId)
-        return ok() //TODO removes accesories relation correctly, but doesnt remove itself, add
+        //TODO removes accesories relation correctly, but doesnt remove itself, add
         // Tea onetoone to BrewConfiguration
     }
 }

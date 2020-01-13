@@ -14,7 +14,7 @@ class Tea(var name: String,
           var imageLink: String?,
           var originCountry: String,
           var caffeineContent: Double,
-          var harvestSeasons: ArrayList<String>,
+          var harvestSeasons: String,
 
           @ManyToOne
           @JoinColumn(name = "user_id", nullable = false)
@@ -59,10 +59,9 @@ class Tea(var name: String,
     }
 
     override fun toString(): String {
-        return "Tea(name='$name', created=$created, imageLink=$imageLink, originCountry='$originCountry'," +
-                " caffeineContent=$caffeineContent, harvestSeasons=$harvestSeasons, author=$author, " +
-                "brewingConfig=$brewingConfig, accessories=${accessories.size}, maxAccessories=$maxAccessories)"
+        return "Tea(name='$name', created=$created, imageLink=$imageLink, " +
+                "originCountry='$originCountry', caffeineContent=$caffeineContent," +
+                "harvestSeasons=$harvestSeasons, author=$author, maxAccessories=$maxAccessories)"
     }
-
 
 }
