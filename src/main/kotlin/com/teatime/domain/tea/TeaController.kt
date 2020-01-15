@@ -31,7 +31,6 @@ class TeaController(private val teaService: TeaService, private val userService:
         val baseUser = userService.getCurrentUser()
         teaService.add(Tea(name, LocalDate.now(), imageLink, originCountry, caffeineContent,
                 harvestSeason, baseUser, null))
-        //TODO walidacja czy herbata o danej nazwie istnieje ? potem
     }
 
     @GetMapping("/all")
@@ -61,7 +60,7 @@ class TeaController(private val teaService: TeaService, private val userService:
     fun deleteTea(@RequestParam(required = true) teaId: UUID) {
 
         teaService.delete(teaId)
-        //TODO removes accesories relation correctly, but doesnt remove itself, add
+        //TODO removes accessories relation correctly, but doesnt remove itself, add
         // Tea onetoone to BrewConfiguration
     }
 }

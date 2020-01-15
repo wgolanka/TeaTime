@@ -17,6 +17,10 @@ class TeaService(private val userService: UserService,
     fun add(tea: Tea) {
 //        brewingConfigRepository.saveAndFlush(brewingConfig)
 
+        if (teaRepository.existsByNameIs(tea.name)) {
+            throw TeaAlreadyExistException()
+        }
+
         val user = userService.getCurrentUser()
         teaRepository.saveAndFlush(
                 Tea(
