@@ -8,5 +8,6 @@ import java.util.*
 interface TeaRepository : JpaRepository<Tea, Long> {
     fun getAllByIdIsNotNull(): List<Tea>
     fun getTeaByIdEquals(id: UUID?): Tea?
+    fun existsByNameIs(name: String): Boolean
     fun deleteByIdEquals(id: UUID?)
 }
