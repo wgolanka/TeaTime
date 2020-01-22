@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 
-@CrossOrigin(origins = ["http://localhost:3000", "http://localhost:3000/#"], maxAge = 3600)
+@CrossOrigin("*", maxAge = 3600)
 @Controller
 @Validated
 @RequestMapping("/accessory")
@@ -18,11 +18,18 @@ class AccessoryController(val accessoryService: AccessoryService) {
 
     @PostMapping(value = ["/add"])
     @ResponseStatus(HttpStatus.OK)
-    fun addAccessory(@RequestBody(required = true) accessory: Accessory,
+    fun addAccessory(@RequestParam(required = true) name: String,
+                     priceFrom: Double,
+                     priceTo: Double,
+                     description: String,
+                     isNecessary: String,
+                     imageLink: String,
                      response: HttpServletResponse) {
 
-        accessoryService.add(Accessory(accessory.name, accessory.priceRange,
-                accessory.description, accessory.imageLink, accessory.isNecessary))
+        val isNecessaryBoolean = isNecessary != ""
+        val priceRange = "$priceFrom - $priceTo"
+        val accessory = Accessory(name, priceRange, description, imageLink, isNecessaryBoolean)
+        accessoryService.add(accessory)
     }
 
     @GetMapping("/all")
