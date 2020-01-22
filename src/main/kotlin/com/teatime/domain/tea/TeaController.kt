@@ -72,9 +72,9 @@ class TeaController(private val teaService: TeaService, private val userService:
 
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
-    fun deleteTea(@RequestParam(required = true) teaId: UUID) {
+    fun deleteTea(@RequestParam(required = true) id: String) {
 
-        teaService.delete(teaId)
+        teaService.delete(UUID.fromString(id))
         //TODO removes accessories relation correctly, but doesnt remove itself, add
         // Tea onetoone to BrewConfiguration
     }
