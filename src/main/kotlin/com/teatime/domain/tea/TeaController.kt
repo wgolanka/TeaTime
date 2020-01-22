@@ -25,12 +25,18 @@ class TeaController(private val teaService: TeaService, private val userService:
                @RequestParam(required = true) originCountry: String,
                @RequestParam(required = true) harvestSeason: String,
                @RequestParam caffeineContent: Double,
-               @RequestParam(required = true) description: String,
                @RequestParam imageLink: String) {
 
         val baseUser = userService.getCurrentUser()
         teaService.add(Tea(name, LocalDate.now(), imageLink, originCountry, caffeineContent,
                 harvestSeason, baseUser, null))
+    }
+
+    @GetMapping("/{id}") //TODO id required
+    fun getOne(@PathVariable("id") id: String): ResponseEntity<Tea> {
+
+        val tea = teaService.getOne(id) //TODO exception when ID is not uuuid
+        return status(HttpStatus.OK).body(tea)
     }
 
     @GetMapping("/all")
@@ -40,11 +46,20 @@ class TeaController(private val teaService: TeaService, private val userService:
         return status(HttpStatus.OK).body(all)
     }
 
-    @PutMapping("/edit")
+    @PutMapping("/update")
     @ResponseStatus(HttpStatus.OK)
-    fun getEditTea(@RequestBody(required = false) teaObject: Tea) {
+    fun updateTea(@RequestParam(required = true) id: String,
+                  @RequestParam(required = true) name: String,
+                  @RequestParam(required = true) originCountry: String,
+                  @RequestParam(required = true) harvestSeason: String,
+                  @RequestParam caffeineContent: Double,
+                  @RequestParam imageLink: String) {
 
-        teaService.update(teaObject)
+        val baseUser = userService.getCurrentUser()
+
+        val tea = Tea(name, LocalDate.now(), imageLink, originCountry, caffeineContent,
+                harvestSeason, baseUser, null)
+        teaService.update(UUID.fromString(id), tea)
     }
 
     @PutMapping("/accessory/add")
@@ -57,9 +72,9 @@ class TeaController(private val teaService: TeaService, private val userService:
 
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
-    fun deleteTea(@RequestParam(required = true) teaId: UUID) {
+    fun deleteTea(@RequestParam(required = true) id: String) {
 
-        teaService.delete(teaId)
+        teaService.delete(UUID.fromString(id))
         //TODO removes accessories relation correctly, but doesnt remove itself, add
         // Tea onetoone to BrewConfiguration
     }
