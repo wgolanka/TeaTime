@@ -4,6 +4,7 @@ import com.teatime.domain.accessory.AccessoryRepository
 import com.teatime.domain.tea.config.BrewingConfigRepository
 import com.teatime.domain.tea.config.BrewingConfiguration
 import com.teatime.domain.user.UserService
+import javassist.NotFoundException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.util.*
@@ -40,20 +41,23 @@ class TeaService(private val userService: UserService,
         return teaRepository.getAllByIdIsNotNull()
     }
 
-    fun update(tea: Tea) {
-        if (tea.getId() == null) {
-            return
-        }
-        val existingTea = teaRepository.getTeaByIdEquals(tea.getId())
+    fun getOne(id: String): Tea? {
+        return teaRepository.getTeaByIdEquals(UUID.fromString(id))
+    }
+
+    fun update(id: UUID, tea: Tea) {
+        val existingTea = teaRepository.getTeaByIdEquals(id)
         if (existingTea != null) {
             teaRepository.save(updateTeaFields(existingTea, tea))
+        } else {
+            throw NotFoundException("Tea not found, tea id: " + tea.getId())
         }
     }
 
     fun updateTeaFields(tea: Tea, updated: Tea): Tea {
         tea.name = updated.name
-        tea.accessories = if (updated.accessories == null) mutableSetOf() else updated.accessories
-        tea.brewingConfig = updateTeaBrewingConfigFields(tea.brewingConfig!!, updated.brewingConfig!!) //todo null?
+//        tea.accessories = updated.accessories //todo handle in other endpoint most likely
+//        tea.brewingConfig = updateTeaBrewingConfigFields(tea.brewingConfig!!, updated.brewingConfig!!) //todo null
         tea.caffeineContent = updated.caffeineContent
         tea.harvestSeasons = updated.harvestSeasons
         tea.imageLink = updated.imageLink
