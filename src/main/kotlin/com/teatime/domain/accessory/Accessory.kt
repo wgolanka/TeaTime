@@ -10,6 +10,8 @@ import javax.persistence.ManyToMany
 
 @Entity
 class Accessory(var name: String,
+                var priceFrom: Double,
+                var priceTo: Double,
                 var priceRange: String,
                 var description: String,
                 var imageLink: String?,

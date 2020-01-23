@@ -22,13 +22,14 @@ class AccessoryController(val accessoryService: AccessoryService) {
                      priceFrom: Double,
                      priceTo: Double,
                      description: String,
-                     isNecessary: String,
+                     @RequestParam(required = false) isNecessary: String?,
                      imageLink: String,
                      response: HttpServletResponse) {
 
-        val isNecessaryBoolean = isNecessary != ""
+        val isNecessaryBoolean = isNecessary != null
         val priceRange = "$priceFrom - $priceTo"
-        val accessory = Accessory(name, priceRange, description, imageLink, isNecessaryBoolean)
+        //TODO check if same name brewer exist
+        val accessory = Accessory(name, priceFrom, priceTo, priceRange, description, imageLink, isNecessaryBoolean)
         accessoryService.add(accessory)
     }
 
@@ -37,7 +38,12 @@ class AccessoryController(val accessoryService: AccessoryService) {
         return status(HttpStatus.OK).body(accessoryService.getAll())
     }
 
-    @PutMapping(value = ["/edit"])
+    @GetMapping("/accessory")
+    fun getAccessory(@RequestParam(required = true) id: String): ResponseEntity<Accessory> {
+        return status(HttpStatus.OK).body(accessoryService.get(id))
+    }
+
+    @PutMapping(value = ["/update"])
     @ResponseStatus(HttpStatus.OK)
     fun editAccessory(@RequestBody(required = true) accessory: Accessory,
                       response: HttpServletResponse) {

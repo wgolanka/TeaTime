@@ -36,4 +36,9 @@ class AccessoryService(val accessoryRepository: AccessoryRepository) {
     fun remove(accessoryId: UUID) {
         accessoryRepository.deleteByIdEquals(accessoryId) //TODO handle remove accessory from tea  in db?
     }
+
+    fun get(id: String): Accessory? {
+        //TODO throw exception if uuid is wrong
+        return accessoryRepository.getByIdEquals(UUID.fromString(id))
+    }
 }
