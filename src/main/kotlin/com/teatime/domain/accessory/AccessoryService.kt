@@ -16,8 +16,8 @@ class AccessoryService(val accessoryRepository: AccessoryRepository) {
         return accessoryRepository.findAll()
     }
 
-    fun edit(accessory: Accessory) {
-        val existingAccessory = accessoryRepository.getByIdEquals(accessory.getId())
+    fun edit(id: UUID, accessory: Accessory) {
+        val existingAccessory = accessoryRepository.getByIdEquals(id)
         if (existingAccessory != null) {
             accessoryRepository.save(updateAccessoryFields(existingAccessory, accessory))
         }

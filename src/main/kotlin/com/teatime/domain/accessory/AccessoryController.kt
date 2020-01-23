@@ -38,17 +38,26 @@ class AccessoryController(val accessoryService: AccessoryService) {
         return status(HttpStatus.OK).body(accessoryService.getAll())
     }
 
-    @GetMapping("/accessory")
-    fun getAccessory(@RequestParam(required = true) id: String): ResponseEntity<Accessory> {
+    @GetMapping("/{id}")
+    fun getAccessory(@PathVariable("id") id: String): ResponseEntity<Accessory> {
         return status(HttpStatus.OK).body(accessoryService.get(id))
     }
 
     @PutMapping(value = ["/update"])
     @ResponseStatus(HttpStatus.OK)
-    fun editAccessory(@RequestBody(required = true) accessory: Accessory,
+    fun editAccessory(@RequestParam(required = true) id: String,
+                      @RequestParam(required = true) name: String,
+                      priceFrom: Double,
+                      priceTo: Double,
+                      description: String,
+                      @RequestParam(required = false) isNecessary: String?,
+                      @RequestParam(required = false) imageLink: String?,
                       response: HttpServletResponse) {
 
-        accessoryService.edit(accessory)
+//        val baseUser = userService.getCurrentUser() //TODO add user
+        val accessory = Accessory(name, priceFrom, priceTo, "$priceFrom - $priceTo",
+                description, imageLink, isNecessary != null)
+        accessoryService.edit(UUID.fromString(id), accessory)
     }
 
     @DeleteMapping(value = ["/delete"])
