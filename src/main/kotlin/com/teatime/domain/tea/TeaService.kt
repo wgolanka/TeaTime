@@ -86,6 +86,18 @@ class TeaService(private val userService: UserService,
         teaRepository.save(tea)
     }
 
+    fun removeAccessory(teaId: UUID, accessoryId: UUID) {
+        val accessory = accessoryRepository.getByIdEquals(accessoryId)
+        val tea = teaRepository.getTeaByIdEquals(teaId)
+
+        if (accessory == null || tea == null) {
+            return
+        }
+
+        tea.removeAccessory(accessory)
+        teaRepository.save(tea)
+    }
+
     fun delete(teaId: UUID) {
         val tea = teaRepository.getTeaByIdEquals(teaId) ?: return
         tea.accessories.removeAll(tea.accessories)
