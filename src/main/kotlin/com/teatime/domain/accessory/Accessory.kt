@@ -1,5 +1,6 @@
 package com.teatime.domain.accessory
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import com.teatime.domain.tea.Tea
 import com.teatime.orm.AbstractJpaPersistable
 import java.io.Serializable
@@ -17,6 +18,7 @@ class Accessory(var name: String,
                 var imageLink: String?,
                 var isNecessary: Boolean) : Serializable, AbstractJpaPersistable<Accessory>() {
 
+    @JsonBackReference
     @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST], mappedBy = "accessories")
     var teas: MutableSet<Tea> = mutableSetOf()
 
