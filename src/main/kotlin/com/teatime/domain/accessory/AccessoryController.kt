@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 
-@CrossOrigin(origins = ["http://localhost:3000", "http://localhost:3000/#"], maxAge = 3600)
+@CrossOrigin("*", maxAge = 3600)
 @Controller
 @Validated
 @RequestMapping("/accessory")
@@ -18,11 +18,19 @@ class AccessoryController(val accessoryService: AccessoryService) {
 
     @PostMapping(value = ["/add"])
     @ResponseStatus(HttpStatus.OK)
-    fun addAccessory(@RequestBody(required = true) accessory: Accessory,
+    fun addAccessory(@RequestParam(required = true) name: String,
+                     priceFrom: Double,
+                     priceTo: Double,
+                     description: String,
+                     @RequestParam(required = false) isNecessary: String?,
+                     imageLink: String,
                      response: HttpServletResponse) {
 
-        accessoryService.add(Accessory(accessory.name, accessory.priceRange,
-                accessory.description, accessory.imageLink, accessory.isNecessary))
+        val isNecessaryBoolean = isNecessary != null
+        val priceRange = "$priceFrom - $priceTo"
+        //TODO check if same name brewer exist
+        val accessory = Accessory(name, priceFrom, priceTo, priceRange, description, imageLink, isNecessaryBoolean)
+        accessoryService.add(accessory)
     }
 
     @GetMapping("/all")
@@ -30,20 +38,39 @@ class AccessoryController(val accessoryService: AccessoryService) {
         return status(HttpStatus.OK).body(accessoryService.getAll())
     }
 
-    @PutMapping(value = ["/edit"])
+    @GetMapping("/allExceptContainingTea/{teaId}")
+    fun getFilteredAccessories(@PathVariable("teaId") id: String): ResponseEntity<List<Accessory>> {
+        return status(HttpStatus.OK).body(accessoryService.getAllExceptFrom(UUID.fromString(id)))
+    }
+
+    @GetMapping("/{id}")
+    fun getAccessory(@PathVariable("id") id: String): ResponseEntity<Accessory> {
+        return status(HttpStatus.OK).body(accessoryService.get(id))
+    }
+
+    @PutMapping(value = ["/update"])
     @ResponseStatus(HttpStatus.OK)
-    fun editAccessory(@RequestBody(required = true) accessory: Accessory,
+    fun editAccessory(@RequestParam(required = true) id: String,
+                      @RequestParam(required = true) name: String,
+                      priceFrom: Double,
+                      priceTo: Double,
+                      description: String,
+                      @RequestParam(required = false) isNecessary: String?,
+                      @RequestParam(required = false) imageLink: String?,
                       response: HttpServletResponse) {
 
-        accessoryService.edit(accessory)
+//        val baseUser = userService.getCurrentUser() //TODO add user
+        val accessory = Accessory(name, priceFrom, priceTo, "$priceFrom - $priceTo",
+                description, imageLink, isNecessary != null)
+        accessoryService.edit(UUID.fromString(id), accessory)
     }
 
     @DeleteMapping(value = ["/delete"])
     @ResponseStatus(HttpStatus.OK)
-    fun removeAccessory(@RequestParam(required = true) accessoryId: UUID,
+    fun removeAccessory(@RequestParam(required = true) id: String,
                         response: HttpServletResponse) {
-
-        accessoryService.remove(accessoryId) //TODO does it work ?
+        //TODO exception when doesn't exist or wrong uuid
+        accessoryService.remove(UUID.fromString(id)) //TODO does it work ?
     }
 }
 
