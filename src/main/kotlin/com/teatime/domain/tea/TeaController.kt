@@ -18,7 +18,6 @@ import javax.transaction.Transactional
 @Transactional
 class TeaController(private val teaService: TeaService, private val userService: UserService) {
 
-
     @PostMapping(value = ["/add"])
     @ResponseStatus(HttpStatus.OK)
     fun addTea(@RequestParam(required = true) name: String,
@@ -63,7 +62,7 @@ class TeaController(private val teaService: TeaService, private val userService:
     }
 
     @GetMapping("/byAccessory/{accessoryId}")
-    fun getAccessoryByTea(@PathVariable("accessoryId") accessoryId: String): ResponseEntity<Set<Tea>> {
+    fun getAccessoriesByTea(@PathVariable("accessoryId") accessoryId: String): ResponseEntity<Set<Tea>> {
         return status(HttpStatus.OK).body(teaService.getByAccessory(accessoryId))
     }
 
@@ -73,6 +72,14 @@ class TeaController(private val teaService: TeaService, private val userService:
                      @PathVariable("accessoryId") accessoryId: String) {
 
         teaService.addAccessory(UUID.fromString(teaId), UUID.fromString(accessoryId))
+    }
+
+    @PutMapping("/accessory/remove/{teaId}/{accessoryId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun removeAccessory(@PathVariable("teaId") teaId: String,
+                        @PathVariable("accessoryId") accessoryId: String) {
+
+        teaService.removeAccessory(UUID.fromString(teaId), UUID.fromString(accessoryId))
     }
 
     @DeleteMapping("/delete")
