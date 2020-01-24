@@ -38,6 +38,11 @@ class AccessoryController(val accessoryService: AccessoryService) {
         return status(HttpStatus.OK).body(accessoryService.getAll())
     }
 
+    @GetMapping("/allExceptContainingTea/{teaId}")
+    fun getFilteredAccessories(@PathVariable("teaId") id: String): ResponseEntity<List<Accessory>> {
+        return status(HttpStatus.OK).body(accessoryService.getAllExceptFrom(UUID.fromString(id)))
+    }
+
     @GetMapping("/{id}")
     fun getAccessory(@PathVariable("id") id: String): ResponseEntity<Accessory> {
         return status(HttpStatus.OK).body(accessoryService.get(id))
@@ -62,10 +67,10 @@ class AccessoryController(val accessoryService: AccessoryService) {
 
     @DeleteMapping(value = ["/delete"])
     @ResponseStatus(HttpStatus.OK)
-    fun removeAccessory(@RequestParam(required = true) accessoryId: UUID,
+    fun removeAccessory(@RequestParam(required = true) id: String,
                         response: HttpServletResponse) {
-
-        accessoryService.remove(accessoryId) //TODO does it work ?
+        //TODO exception when doesn't exist or wrong uuid
+        accessoryService.remove(UUID.fromString(id)) //TODO does it work ?
     }
 }
 

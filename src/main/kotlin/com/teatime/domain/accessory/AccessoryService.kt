@@ -1,12 +1,13 @@
 package com.teatime.domain.accessory
 
+import com.teatime.domain.tea.TeaRepository
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
 
 @Service
 @Transactional
-class AccessoryService(val accessoryRepository: AccessoryRepository) {
+class AccessoryService(val accessoryRepository: AccessoryRepository, val teaRepository: TeaRepository) {
 
     fun add(accessory: Accessory) {
         accessoryRepository.save(accessory)
@@ -40,5 +41,11 @@ class AccessoryService(val accessoryRepository: AccessoryRepository) {
     fun get(id: String): Accessory? {
         //TODO throw exception if uuid is wrong
         return accessoryRepository.getByIdEquals(UUID.fromString(id))
+    }
+
+    fun getAllExceptFrom(teaId: UUID?): List<Accessory>? {
+        val allAccessories = accessoryRepository.getAllByIdIsNotNull()
+        val tea = teaRepository.getTeaByIdEquals(teaId)
+        return allAccessories.filter { accessory -> accessory.teas.contains(tea) }
     }
 }
