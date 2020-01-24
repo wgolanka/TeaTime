@@ -101,4 +101,9 @@ class TeaService(private val userService: UserService,
 //            teaRepository.deleteByIdEquals(teaId)
 //        }
     }
+
+    fun getByAccessory(accessoryId: String): Set<Tea>? {
+        val accessory = accessoryRepository.getByIdEquals(UUID.fromString(accessoryId))
+        return accessory?.teas ?: mutableSetOf()
+    }
 }

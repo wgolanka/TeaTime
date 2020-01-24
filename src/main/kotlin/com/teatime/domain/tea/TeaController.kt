@@ -62,12 +62,17 @@ class TeaController(private val teaService: TeaService, private val userService:
         teaService.update(UUID.fromString(id), tea)
     }
 
-    @PutMapping("/accessory/add")
-    @ResponseStatus(HttpStatus.OK)
-    fun addAccessory(@RequestParam(required = true) teaId: UUID,
-                     @RequestParam(required = true) accessoryId: UUID) {
+    @GetMapping("/byAccessory/{accessoryId}")
+    fun getAccessoryByTea(@PathVariable("accessoryId") accessoryId: String): ResponseEntity<Set<Tea>> {
+        return status(HttpStatus.OK).body(teaService.getByAccessory(accessoryId))
+    }
 
-        teaService.addAccessory(teaId, accessoryId)
+    @PutMapping("/accessory/add/{teaId}/{accessoryId}")
+    @ResponseStatus(HttpStatus.OK)
+    fun addAccessory(@PathVariable("teaId") teaId: String,
+                     @PathVariable("accessoryId") accessoryId: String) {
+
+        teaService.addAccessory(UUID.fromString(teaId), UUID.fromString(accessoryId))
     }
 
     @DeleteMapping("/delete")

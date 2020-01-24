@@ -48,6 +48,11 @@ class AccessoryController(val accessoryService: AccessoryService) {
         return status(HttpStatus.OK).body(accessoryService.get(id))
     }
 
+    @GetMapping("/byTea/{teaId}")
+    fun getAccessoryByTea(@PathVariable("teaId") teaId: String): ResponseEntity<Set<Accessory>> {
+        return status(HttpStatus.OK).body(accessoryService.getByTea(teaId))
+    }
+
     @PutMapping(value = ["/update"])
     @ResponseStatus(HttpStatus.OK)
     fun editAccessory(@RequestParam(required = true) id: String,

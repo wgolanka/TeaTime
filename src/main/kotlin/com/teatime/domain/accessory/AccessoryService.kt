@@ -46,6 +46,11 @@ class AccessoryService(val accessoryRepository: AccessoryRepository, val teaRepo
     fun getAllExceptFrom(teaId: UUID?): List<Accessory>? {
         val allAccessories = accessoryRepository.getAllByIdIsNotNull()
         val tea = teaRepository.getTeaByIdEquals(teaId)
-        return allAccessories.filter { accessory -> accessory.teas.contains(tea) }
+        return allAccessories.filter { accessory -> !accessory.teas.contains(tea) }
+    }
+
+    fun getByTea(teaId: String): MutableSet<Accessory> {
+        val tea = teaRepository.getTeaByIdEquals(UUID.fromString(teaId))
+        return tea?.accessories ?: mutableSetOf()
     }
 }
