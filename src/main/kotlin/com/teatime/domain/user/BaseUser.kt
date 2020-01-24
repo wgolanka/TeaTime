@@ -5,7 +5,6 @@ import com.teatime.domain.tea.Tea
 import com.teatime.orm.AbstractJpaPersistable
 import java.io.Serializable
 import java.time.LocalDate
-import javax.persistence.CascadeType
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.OneToMany
@@ -18,7 +17,7 @@ class BaseUser(var nickname: String,
                var emailAddress: String?) : AbstractJpaPersistable<BaseUser>(), Serializable {
 
     @JsonBackReference
-    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "author")
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "author")
     val createdTeas: MutableSet<Tea> = mutableSetOf()
 
     fun addCreatedTea(tea: Tea) {

@@ -100,8 +100,17 @@ class TeaService(private val userService: UserService,
 
     fun delete(teaId: UUID) {
         val tea = teaRepository.getTeaByIdEquals(teaId) ?: return
-        tea.accessories.removeAll(tea.accessories)
-        teaRepository.delete(tea)
+        val allTeaAccessories = tea.accessories
+        allTeaAccessories.stream().forEach { accessory -> accessory.teas.clear() }
+        tea.accessories.clear()
+
+        val brewingConfigId = tea.brewingConfig?.getId()
+        if (brewingConfigId != null) {
+            tea.brewingConfig = null
+            brewingConfigRepository.removeByIdEquals(brewingConfigId)
+            teaRepository.save(tea)
+        }
+        teaRepository.deleteByIdEquals(teaId)
 //        val accessoriesIterator = teaAccessories.iterator()
 //        var next: Accessory
 //        while (accessoriesIterator.hasNext()){
@@ -117,5 +126,14 @@ class TeaService(private val userService: UserService,
     fun getByAccessory(accessoryId: String): Set<Tea>? {
         val accessory = accessoryRepository.getByIdEquals(UUID.fromString(accessoryId))
         return accessory?.teas ?: mutableSetOf()
+    }
+
+    fun updateConfig(teaId: UUID?, brewingConfiguration: BrewingConfiguration) {
+        brewingConfigRepository.save(brewingConfiguration)
+        val tea = teaRepository.getTeaByIdEquals(teaId)
+        if (tea != null) {
+            tea.brewingConfig = brewingConfiguration
+            teaRepository.save(tea)
+        }
     }
 }
