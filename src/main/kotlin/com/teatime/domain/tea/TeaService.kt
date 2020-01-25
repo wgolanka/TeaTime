@@ -48,7 +48,7 @@ class TeaService(private val userService: UserService,
     fun update(id: UUID, tea: Tea) {
         val existingTea = teaRepository.getTeaByIdEquals(id)
         if (existingTea != null) {
-            teaRepository.save(updateTeaFields(existingTea, tea))
+            teaRepository.saveAndFlush(updateTeaFields(existingTea, tea))
         } else {
             throw NotFoundException("Tea not found, tea id: " + tea.getId())
         }
@@ -56,8 +56,6 @@ class TeaService(private val userService: UserService,
 
     fun updateTeaFields(tea: Tea, updated: Tea): Tea {
         tea.name = updated.name
-//        tea.accessories = updated.accessories //todo handle in other endpoint most likely
-//        tea.brewingConfig = updateTeaBrewingConfigFields(tea.brewingConfig!!, updated.brewingConfig!!) //todo null
         tea.caffeineContent = updated.caffeineContent
         tea.harvestSeasons = updated.harvestSeasons
         tea.imageLink = updated.imageLink
@@ -101,26 +99,16 @@ class TeaService(private val userService: UserService,
     fun delete(teaId: UUID) {
         val tea = teaRepository.getTeaByIdEquals(teaId) ?: return
         val allTeaAccessories = tea.accessories
-        allTeaAccessories.stream().forEach { accessory -> accessory.teas.clear() }
+        allTeaAccessories.stream().forEach { accessory -> accessory.teas.remove(tea) }
         tea.accessories.clear()
 
         val brewingConfigId = tea.brewingConfig?.getId()
         if (brewingConfigId != null) {
             tea.brewingConfig = null
             brewingConfigRepository.removeByIdEquals(brewingConfigId)
-            teaRepository.save(tea)
         }
+        teaRepository.save(tea)
         teaRepository.deleteByIdEquals(teaId)
-//        val accessoriesIterator = teaAccessories.iterator()
-//        var next: Accessory
-//        while (accessoriesIterator.hasNext()){
-//            next = accessoriesIterator.next()
-//            next.removeTea(tea)
-//        }
-//        if(tea.accessories.isEmpty()){
-//            accessoryRepository.saveAll(teaAccessories)
-//            teaRepository.deleteByIdEquals(teaId)
-//        }
     }
 
     fun getByAccessory(accessoryId: String): Set<Tea>? {

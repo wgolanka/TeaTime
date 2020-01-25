@@ -62,9 +62,9 @@ class TeaController(private val teaService: TeaService, private val userService:
         teaService.update(UUID.fromString(id), tea)
     }
 
-    @PutMapping("/config/update/{teaId}")
+    @PutMapping("/config/update")
     @ResponseStatus(HttpStatus.OK)
-    fun updateTeaConfig(@PathVariable("teaId") teaId: String,
+    fun updateTeaConfig(@RequestParam(required = true) teaId: String,
                         @RequestParam(required = true) brewingTime: String,
                         @RequestParam(required = true) ingredients: List<String>,
                         @RequestParam(required = true) drinkingTime: List<String>,

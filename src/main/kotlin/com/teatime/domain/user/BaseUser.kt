@@ -11,9 +11,9 @@ import javax.persistence.OneToMany
 
 @Entity
 class BaseUser(var nickname: String,
-               var avatar: ByteArray?,
+               var avatar: String?, //TODO change to string in PG database
                val accountCreated: LocalDate,
-               val description: String?,
+               var description: String?,
                var emailAddress: String?) : AbstractJpaPersistable<BaseUser>(), Serializable {
 
     @JsonBackReference
