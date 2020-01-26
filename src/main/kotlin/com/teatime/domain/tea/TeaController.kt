@@ -1,6 +1,7 @@
 package com.teatime.domain.tea
 
 import com.teatime.domain.tea.config.BrewingConfiguration
+import com.teatime.domain.user.UserRepository
 import com.teatime.domain.user.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,7 +18,8 @@ import javax.transaction.Transactional
 @Validated
 @RequestMapping("/tea")
 @Transactional
-class TeaController(private val teaService: TeaService, private val userService: UserService) {
+class TeaController(private val teaService: TeaService, private val userService: UserService,
+                    private val userRepository: UserRepository) {
 
     @PostMapping(value = ["/add"])
     @ResponseStatus(HttpStatus.OK)
@@ -37,6 +39,22 @@ class TeaController(private val teaService: TeaService, private val userService:
 
         val tea = teaService.getOne(id) //TODO exception when ID is not uuuid
         return status(HttpStatus.OK).body(tea)
+    }
+
+    @GetMapping("/byUserId/{userId}") //TODO id required
+    fun getByUser(@PathVariable("userId") userId: String): ResponseEntity<MutableSet<Tea>> {
+
+        val user = userRepository.findByIdIs(UUID.fromString(userId))
+
+        return if (user != null) {
+            status(HttpStatus.OK).body(user.createdTeas)
+        } else status(HttpStatus.OK).body(mutableSetOf())
+    }
+
+    @GetMapping("/byCurrentUser")
+    fun getByUser(): ResponseEntity<MutableSet<Tea>> {
+        val currentUser = userService.getCurrentUser()
+        return status(HttpStatus.OK).body(currentUser.createdTeas)
     }
 
     @GetMapping("/all")
@@ -103,8 +121,6 @@ class TeaController(private val teaService: TeaService, private val userService:
     fun deleteTea(@RequestParam(required = true) id: String) {
 
         teaService.delete(UUID.fromString(id))
-        //TODO removes accessories relation correctly, but doesnt remove itself, add
-        // Tea onetoone to BrewConfiguration
     }
 }
 

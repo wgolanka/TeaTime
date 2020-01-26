@@ -6,5 +6,6 @@ import java.util.*
 
 @Repository
 interface UserRepository : JpaRepository<BaseUser, Long> {
-    fun findByIdIs(id: UUID): BaseUser
+    fun findByIdIs(id: UUID): BaseUser?
+    fun deleteByIdIs(id: UUID)
 }

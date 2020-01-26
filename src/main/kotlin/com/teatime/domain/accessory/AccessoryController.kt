@@ -1,5 +1,6 @@
 package com.teatime.domain.accessory
 
+import com.teatime.domain.user.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 @Validated
 @RequestMapping("/accessory")
-class AccessoryController(val accessoryService: AccessoryService) {
+class AccessoryController(val accessoryService: AccessoryService, val userRepository: UserRepository) {
 
 
     @PostMapping(value = ["/add"])
@@ -52,6 +53,16 @@ class AccessoryController(val accessoryService: AccessoryService) {
     fun getAccessoryByTea(@PathVariable("teaId") teaId: String): ResponseEntity<Set<Accessory>> {
         return status(HttpStatus.OK).body(accessoryService.getByTea(teaId))
     }
+
+//    @GetMapping("/byUser/{userId}") //TODO id required
+//    fun getByUser(@PathVariable("userId") userId: String): ResponseEntity<MutableSet<Accessory>> {
+//
+//        val user = userRepository.findByIdIs(UUID.fromString(userId))
+//
+//        return if (user != null) {
+//            status(HttpStatus.OK).body(user.accessories)
+//        } else status(HttpStatus.OK).body(mutableSetOf())
+//    }
 
     @PutMapping(value = ["/update"])
     @ResponseStatus(HttpStatus.OK)
