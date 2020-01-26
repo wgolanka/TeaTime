@@ -18,9 +18,9 @@ class UserService(private val userRepository: UserRepository) {
                     LocalDate.now(), "This is arthur",
                     "Arthur@rdr2.com")
             userRepository.save(newUser)
-            return userRepository.findByIdIs(newUser.getId()!!)
+            return userRepository.findByIdIs(newUser.getId()!!)!!
         }
-
+        currentDefaultUser = allUsers[0]
         return allUsers[0]
     }
 
