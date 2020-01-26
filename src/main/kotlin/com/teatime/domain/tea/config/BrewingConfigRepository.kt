@@ -8,4 +8,5 @@ import java.util.*
 interface BrewingConfigRepository : JpaRepository<BrewingConfiguration, Long> {
     fun getAllByIdIsNotNull(): List<BrewingConfiguration>
     fun getByIdEquals(id: UUID?): BrewingConfiguration
+    fun removeByIdEquals(id: UUID)
 }

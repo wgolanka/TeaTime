@@ -14,7 +14,8 @@ class UserService(private val userRepository: UserRepository) {
 
         val allUsers = userRepository.findAll()
         if (allUsers.isEmpty()) {
-            val newUser = BaseUser("Arthur", byteArrayOf(), LocalDate.now(), "This is arthur",
+            val newUser = BaseUser("Arthur", "https://a.wattpad.com/cover/182129071-352-k178784.jpg",
+                    LocalDate.now(), "This is arthur",
                     "Arthur@rdr2.com")
             userRepository.save(newUser)
             return userRepository.findByIdIs(newUser.getId()!!)
@@ -25,6 +26,15 @@ class UserService(private val userRepository: UserRepository) {
 
     fun setCurrentUser(id: UUID) {
         currentDefaultUser = userRepository.findByIdIs(id) //TODO handle null
+    }
+
+    fun update(user: BaseUser, nickname: String, avatar: String?, description: String) {
+        user.nickname = nickname
+        if (avatar != null) {
+            user.avatar = avatar
+        }
+        user.description = description
+        userRepository.save(user)
     }
 
     companion object {

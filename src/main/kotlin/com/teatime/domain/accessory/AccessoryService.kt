@@ -30,11 +30,15 @@ class AccessoryService(val accessoryRepository: AccessoryRepository, val teaRepo
         accessory.imageLink = updated.imageLink
         accessory.isNecessary = updated.isNecessary
         accessory.priceRange = updated.priceRange
-        accessory.teas = if (updated.teas == null) mutableSetOf() else updated.teas
         return accessory
     }
 
     fun remove(accessoryId: UUID) {
+        val accessory = accessoryRepository.getByIdEquals(accessoryId) ?: return
+        val teas = accessory.teas
+        teas.stream().forEach { tea -> tea.accessories.remove(accessory) }
+        accessory.teas.clear()
+        accessoryRepository.save(accessory)
         accessoryRepository.deleteByIdEquals(accessoryId) //TODO handle remove accessory from tea  in db?
     }
 

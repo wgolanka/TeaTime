@@ -1,5 +1,6 @@
 package com.teatime.domain.tea
 
+import com.teatime.domain.tea.config.BrewingConfiguration
 import com.teatime.domain.user.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -59,6 +60,21 @@ class TeaController(private val teaService: TeaService, private val userService:
         val tea = Tea(name, LocalDate.now(), imageLink, originCountry, caffeineContent,
                 harvestSeason, baseUser, null)
         teaService.update(UUID.fromString(id), tea)
+    }
+
+    @PutMapping("/config/update")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateTeaConfig(@RequestParam(required = true) teaId: String,
+                        @RequestParam(required = true) brewingTime: String,
+                        @RequestParam(required = true) ingredients: List<String>,
+                        @RequestParam(required = true) drinkingTime: List<String>,
+                        @RequestParam isDifficultToMake: String?,
+                        @RequestParam description: String) {
+
+        val brewingConfiguration = BrewingConfiguration(brewingTime, ingredients as ArrayList<String>,
+                drinkingTime as ArrayList<String>, isDifficultToMake != null, description)
+
+        teaService.updateConfig(UUID.fromString(teaId), brewingConfiguration)
     }
 
     @GetMapping("/byAccessory/{accessoryId}")

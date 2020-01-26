@@ -9,14 +9,14 @@ import java.time.LocalDate
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 
-@CrossOrigin(origins = ["http://localhost:3000", "http://localhost:3000/#"], maxAge = 3600)
+@CrossOrigin("*", maxAge = 3600)
 @Controller
 @RequestMapping("/user")
 class UserController(val userService: UserService, val userRepository: UserRepository) {
 
-    @PutMapping(value = ["/add"])
+    @PostMapping(value = ["/add"])
     fun addNewUser(@RequestParam(required = true) nickname: String,
-                   @RequestParam(required = true) avatar: ByteArray,
+                   @RequestParam(required = false) avatar: String?,
                    @RequestParam(required = true) description: String,
                    @RequestParam(required = true) emailAddress: String,
                    response: HttpServletResponse) {
@@ -27,10 +27,34 @@ class UserController(val userService: UserService, val userRepository: UserRepos
         }
     }
 
+    @PutMapping(value = ["/update"])
+    fun updateUser(
+            @RequestParam(required = true) id: String,
+            @RequestParam(required = true) nickname: String,
+            @RequestParam(required = false) avatar: String?,
+            @RequestParam(required = true) description: String,
+            response: HttpServletResponse) {
+
+        val user = userRepository.findByIdIs(UUID.fromString(id))
+        userService.update(user, nickname, avatar, description)
+    }
+
     @GetMapping(value = ["/all"])
     fun getUsers(): ResponseEntity<MutableList<BaseUser>> {
         val all = userRepository.findAll()
         return ok(all)
+    }
+
+    @GetMapping(value = ["/current"])
+    fun getUser(): ResponseEntity<BaseUser> {
+        val all = userRepository.findAll()
+        return ok(all[0])
+    }
+
+    @GetMapping(value = ["/{id}"])
+    fun getUserById(@PathVariable("id") id: String): ResponseEntity<BaseUser> {
+        val user = userRepository.findByIdIs(UUID.fromString(id))
+        return ok(user)
     }
 
     @GetMapping("/teas")
