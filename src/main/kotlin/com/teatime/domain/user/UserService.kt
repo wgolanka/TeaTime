@@ -3,8 +3,10 @@ package com.teatime.domain.user
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.util.*
+import javax.transaction.Transactional
 
 @Service
+@Transactional
 class UserService(private val userRepository: UserRepository) {
 
     fun getCurrentUser(): BaseUser {
@@ -29,12 +31,19 @@ class UserService(private val userRepository: UserRepository) {
     }
 
     fun update(user: BaseUser, nickname: String, avatar: String?, description: String) {
-        user.nickname = nickname
+        user.username = nickname
         if (avatar != null) {
             user.avatar = avatar
         }
         user.description = description
         userRepository.save(user)
+    }
+
+    fun delete() {
+        val currentUserId = currentDefaultUser?.getId()
+        val user = userRepository.findByIdIs(currentUserId!!) ?: return
+        userRepository.deleteByIdIs(user.getId()!!) //TODO fix, not working
+        currentDefaultUser = null
     }
 
     companion object {

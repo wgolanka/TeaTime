@@ -2,12 +2,13 @@ package com.teatime.domain.accessory
 
 import com.fasterxml.jackson.annotation.JsonBackReference
 import com.teatime.domain.tea.Tea
+import com.teatime.domain.user.BaseUser
 import com.teatime.orm.AbstractJpaPersistable
 import java.io.Serializable
-import javax.persistence.CascadeType
+import java.time.LocalDate
 import javax.persistence.Entity
-import javax.persistence.FetchType
 import javax.persistence.ManyToMany
+import javax.persistence.ManyToOne
 
 @Entity
 class Accessory(var name: String,
@@ -16,10 +17,14 @@ class Accessory(var name: String,
                 var priceRange: String,
                 var description: String,
                 var imageLink: String?,
-                var isNecessary: Boolean) : Serializable, AbstractJpaPersistable<Accessory>() {
+                var necessary: Boolean,
+                val createdDate: LocalDate,
+
+                @ManyToOne //  @JoinColumn(name = "user_id", nullable = false)
+                var author: BaseUser) : Serializable, AbstractJpaPersistable<Accessory>() {
 
     @JsonBackReference
-    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST], mappedBy = "accessories")
+    @ManyToMany(mappedBy = "accessories")
     var teas: MutableSet<Tea> = mutableSetOf()
 
     fun addTea(tea: Tea) {
@@ -43,6 +48,6 @@ class Accessory(var name: String,
 
     override fun toString(): String {
         return "Accessory(name='$name', priceRange='$priceRange', description='$description', " +
-                ", isNecessary=$isNecessary, teas=${teas.size})"
+                ", isNecessary=$necessary, teas=${teas.size})"
     }
 }
