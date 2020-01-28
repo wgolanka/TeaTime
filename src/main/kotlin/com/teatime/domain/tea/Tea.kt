@@ -10,20 +10,22 @@ import javax.persistence.*
 
 @Entity
 class Tea(var name: String,
-          var created: LocalDate,
+          var createdDate: LocalDate,
           var imageLink: String?,
           var originCountry: String,
           var caffeineContent: Double,
           var harvestSeasons: String,
 
-          @ManyToOne
-          @JoinColumn(name = "user_id", nullable = false)
+          @ManyToOne //@JoinColumn(name = "user_id", nullable = false)
           var author: BaseUser,
 
           @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
           var brewingConfig: BrewingConfiguration?) : AbstractJpaPersistable<Tea>(), Serializable {
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST])
+    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @JoinTable(name = "tea_accessory",
+            joinColumns = [JoinColumn(name = "tea_id", referencedColumnName = "id")],
+            inverseJoinColumns = [JoinColumn(name = "accessory_id", referencedColumnName = "id")])
     var accessories = mutableSetOf<Accessory>()
 
     private val maxAccessories = 5
@@ -59,7 +61,7 @@ class Tea(var name: String,
     }
 
     override fun toString(): String {
-        return "Tea(name='$name', created=$created, imageLink=$imageLink, " +
+        return "Tea(name='$name', created=$createdDate, imageLink=$imageLink, " +
                 "originCountry='$originCountry', caffeineContent=$caffeineContent," +
                 "harvestSeasons=$harvestSeasons, author=$author, maxAccessories=$maxAccessories)"
     }

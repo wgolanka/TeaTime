@@ -3,34 +3,38 @@ package com.teatime.domain.tea
 import com.teatime.domain.accessory.AccessoryRepository
 import com.teatime.domain.tea.config.BrewingConfigRepository
 import com.teatime.domain.tea.config.BrewingConfiguration
+import com.teatime.domain.user.BaseUser
 import com.teatime.domain.user.UserService
 import javassist.NotFoundException
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.util.*
+import javax.transaction.Transactional
 
 @Service
+@Transactional
 class TeaService(private val userService: UserService,
                  private val teaRepository: TeaRepository,
                  private val brewingConfigRepository: BrewingConfigRepository,
                  private val accessoryRepository: AccessoryRepository) {
 
-    fun add(tea: Tea) {
+    fun add(name: String, originCountry: String, harvestSeason: String,
+            caffeineContent: Double, imageLink: String, baseUser: BaseUser) {
 //        brewingConfigRepository.saveAndFlush(brewingConfig)
 
-        if (teaRepository.existsByNameIs(tea.name)) {
-            throw TeaAlreadyExistException()
-        }
+//        if (teaRepository.existsByNameIs(tea.name)) {
+//            throw TeaAlreadyExistException()
+//        }
 
         val user = userService.getCurrentUser()
         teaRepository.saveAndFlush(
                 Tea(
-                        tea.name,
+                        name,
                         LocalDate.now(),
-                        tea.imageLink,
-                        tea.originCountry,
-                        tea.caffeineContent,
-                        tea.harvestSeasons,
+                        imageLink,
+                        originCountry,
+                        caffeineContent,
+                        harvestSeason,
                         user,
                         null
                 )
@@ -98,16 +102,7 @@ class TeaService(private val userService: UserService,
 
     fun delete(teaId: UUID) {
         val tea = teaRepository.getTeaByIdEquals(teaId) ?: return
-        val allTeaAccessories = tea.accessories
-        allTeaAccessories.stream().forEach { accessory -> accessory.teas.remove(tea) }
-        tea.accessories.clear()
-
-        val brewingConfigId = tea.brewingConfig?.getId()
-        if (brewingConfigId != null) {
-            tea.brewingConfig = null
-            brewingConfigRepository.removeByIdEquals(brewingConfigId)
-        }
-        teaRepository.save(tea)
+        tea.author.createdTeas.remove(tea)
         teaRepository.deleteByIdEquals(teaId)
     }
 

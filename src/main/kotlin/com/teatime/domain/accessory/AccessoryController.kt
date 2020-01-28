@@ -1,12 +1,13 @@
 package com.teatime.domain.accessory
 
-import com.teatime.domain.user.UserRepository
+import com.teatime.domain.user.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.status
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 @Validated
 @RequestMapping("/accessory")
-class AccessoryController(val accessoryService: AccessoryService, val userRepository: UserRepository) {
+class AccessoryController(val accessoryService: AccessoryService, val userService: UserService) {
 
 
     @PostMapping(value = ["/add"])
@@ -29,8 +30,10 @@ class AccessoryController(val accessoryService: AccessoryService, val userReposi
 
         val isNecessaryBoolean = isNecessary != null
         val priceRange = "$priceFrom - $priceTo"
+        val user = userService.getCurrentUser()
         //TODO check if same name brewer exist
-        val accessory = Accessory(name, priceFrom, priceTo, priceRange, description, imageLink, isNecessaryBoolean)
+        val accessory = Accessory(name, priceFrom, priceTo, priceRange, description, imageLink, isNecessaryBoolean,
+                LocalDate.now(), user)
         accessoryService.add(accessory)
     }
 
@@ -75,9 +78,9 @@ class AccessoryController(val accessoryService: AccessoryService, val userReposi
                       @RequestParam(required = false) imageLink: String?,
                       response: HttpServletResponse) {
 
-//        val baseUser = userService.getCurrentUser() //TODO add user
+        val user = userService.getCurrentUser()
         val accessory = Accessory(name, priceFrom, priceTo, "$priceFrom - $priceTo",
-                description, imageLink, isNecessary != null)
+                description, imageLink, isNecessary != null, LocalDate.now(), user)
         accessoryService.edit(UUID.fromString(id), accessory)
     }
 

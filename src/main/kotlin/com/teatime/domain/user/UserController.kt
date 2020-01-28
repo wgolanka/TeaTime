@@ -1,7 +1,6 @@
 package com.teatime.domain.user
 
 import com.teatime.domain.tea.Tea
-import com.teatime.domain.tea.TeaService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
@@ -16,18 +15,17 @@ import javax.transaction.Transactional
 @Controller
 @RequestMapping("/user")
 @Transactional
-class UserController(val userService: UserService, val userRepository: UserRepository,
-                     val teaService: TeaService) {
+class UserController(val userService: UserService, val userRepository: UserRepository) {
 
     @PostMapping(value = ["/add"])
-    fun addNewUser(@RequestParam(required = true) nickname: String,
+    fun addNewUser(@RequestParam(required = true) username: String,
                    @RequestParam(required = false) avatar: String?,
                    @RequestParam(required = true) description: String,
                    @RequestParam(required = true) emailAddress: String,
                    response: HttpServletResponse) {
 
         if (userRepository.findAll().stream().noneMatch { brewer -> brewer.emailAddress == emailAddress }) {
-            val newUser = BaseUser(nickname, avatar, LocalDate.now(), description, emailAddress)
+            val newUser = BaseUser(username, avatar, LocalDate.now(), description, emailAddress)
             userRepository.save(newUser)
         }
     }
@@ -62,12 +60,7 @@ class UserController(val userService: UserService, val userRepository: UserRepos
     @DeleteMapping(value = ["/current"])
     fun deleteUser() {
         if (UserService.currentDefaultUser == null) return
-        val currentUserId = UserService.currentDefaultUser!!.getId()
-        val user = userRepository.findByIdIs(currentUserId!!) ?: return
-
-        user.createdTeas.forEach { tea -> teaService.delete(tea.getId()!!) }
-        userRepository.deleteByIdIs(user.getId()!!)
-        UserService.currentDefaultUser = null
+        userService.delete()
     }
 
     @GetMapping(value = ["/{id}"])

@@ -30,8 +30,7 @@ class TeaController(private val teaService: TeaService, private val userService:
                @RequestParam imageLink: String) {
 
         val baseUser = userService.getCurrentUser()
-        teaService.add(Tea(name, LocalDate.now(), imageLink, originCountry, caffeineContent,
-                harvestSeason, baseUser, null))
+        teaService.add(name, originCountry, harvestSeason, caffeineContent, imageLink, baseUser)
     }
 
     @GetMapping("/{id}") //TODO id required
@@ -53,8 +52,11 @@ class TeaController(private val teaService: TeaService, private val userService:
 
     @GetMapping("/byCurrentUser")
     fun getByUser(): ResponseEntity<MutableSet<Tea>> {
-        val currentUser = userService.getCurrentUser()
-        return status(HttpStatus.OK).body(currentUser.createdTeas)
+        val currentUserId = userService.getCurrentUser().getId()
+        val user = currentUserId?.let { userRepository.findByIdIs(it) }
+        return if (user != null) {
+            status(HttpStatus.OK).body(user.createdTeas)
+        } else status(HttpStatus.NOT_FOUND).body(null)
     }
 
     @GetMapping("/all")
