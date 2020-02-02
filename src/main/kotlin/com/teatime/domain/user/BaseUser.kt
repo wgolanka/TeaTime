@@ -1,6 +1,7 @@
 package com.teatime.domain.user
 
 import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.teatime.domain.accessory.Accessory
 import com.teatime.domain.tea.Tea
 import com.teatime.orm.AbstractJpaPersistable
@@ -16,7 +17,10 @@ class BaseUser(var username: String,
                var avatar: String?,
                val accountCreated: LocalDate,
                var description: String?,
-               var emailAddress: String?) : AbstractJpaPersistable<BaseUser>(), Serializable {
+               var emailAddress: String?,
+
+               @JsonIgnore
+               var password: String) : AbstractJpaPersistable<BaseUser>(), Serializable {
 
     @JsonBackReference
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "author")

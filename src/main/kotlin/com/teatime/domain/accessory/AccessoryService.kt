@@ -10,7 +10,7 @@ import javax.transaction.Transactional
 class AccessoryService(val accessoryRepository: AccessoryRepository, val teaRepository: TeaRepository) {
 
     fun add(accessory: Accessory) {
-        accessoryRepository.save(accessory)
+        accessoryRepository.saveAndFlush(accessory)
     }
 
     fun getAll(): List<Accessory> {
@@ -20,7 +20,7 @@ class AccessoryService(val accessoryRepository: AccessoryRepository, val teaRepo
     fun edit(id: UUID, accessory: Accessory) {
         val existingAccessory = accessoryRepository.getByIdEquals(id)
         if (existingAccessory != null) {
-            accessoryRepository.save(updateAccessoryFields(existingAccessory, accessory))
+            accessoryRepository.saveAndFlush(updateAccessoryFields(existingAccessory, accessory))
         }
     }
 

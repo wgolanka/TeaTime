@@ -57,15 +57,15 @@ class AccessoryController(val accessoryService: AccessoryService, val userServic
         return status(HttpStatus.OK).body(accessoryService.getByTea(teaId))
     }
 
-//    @GetMapping("/byUser/{userId}") //TODO id required
-//    fun getByUser(@PathVariable("userId") userId: String): ResponseEntity<MutableSet<Accessory>> {
-//
-//        val user = userRepository.findByIdIs(UUID.fromString(userId))
-//
-//        return if (user != null) {
-//            status(HttpStatus.OK).body(user.accessories)
-//        } else status(HttpStatus.OK).body(mutableSetOf())
-//    }
+    @GetMapping("/byCurrentUser") //TODO id required
+    fun getByUser(): ResponseEntity<MutableSet<Accessory>> {
+
+        val user = userService.getCurrentUser()
+
+        return if (user != null) {
+            status(HttpStatus.OK).body(user.accessories)
+        } else status(HttpStatus.OK).body(mutableSetOf())
+    }
 
     @PutMapping(value = ["/update"])
     @ResponseStatus(HttpStatus.OK)

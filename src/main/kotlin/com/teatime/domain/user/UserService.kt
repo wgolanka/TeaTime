@@ -5,25 +5,27 @@ import java.time.LocalDate
 import java.util.*
 import javax.transaction.Transactional
 
+
 @Service
 @Transactional
 class UserService(private val userRepository: UserRepository) {
 
     fun getCurrentUser(): BaseUser {
-        if (currentDefaultUser != null) {
-            return currentDefaultUser as BaseUser
-        }
-
-        val allUsers = userRepository.findAll()
-        if (allUsers.isEmpty()) {
-            val newUser = BaseUser("Arthur", "https://a.wattpad.com/cover/182129071-352-k178784.jpg",
-                    LocalDate.now(), "This is arthur",
-                    "Arthur@rdr2.com")
-            userRepository.save(newUser)
-            return userRepository.findByIdIs(newUser.getId()!!)!!
-        }
-        currentDefaultUser = allUsers[0]
-        return allUsers[0]
+//        if (currentDefaultUser != null) {
+//            return currentDefaultUser as BaseUser
+//        }
+//
+//        val allUsers = userRepository.findAll()
+//        if (allUsers.isEmpty()) {
+//            val newUser = BaseUser("Arthur", "https://a.wattpad.com/cover/182129071-352-k178784.jpg",
+//                    LocalDate.now(), "This is arthur",
+//                    "Arthur@rdr2.com", Password.getSaltedHash("blablalba"))
+//            userRepository.save(newUser)
+//            return userRepository.findByIdIs(newUser.getId()!!)!!
+//        }
+//        currentDefaultUser = allUsers[0]
+        val id = currentDefaultUser?.getId() ?: throw Exception("USER NOT LOGGED IN")
+        return userRepository.findByIdIs(id) ?: throw Exception("USER NOT LOGGED IN")
     }
 
     fun setCurrentUser(id: UUID) {
@@ -42,8 +44,22 @@ class UserService(private val userRepository: UserRepository) {
     fun delete() {
         val currentUserId = currentDefaultUser?.getId()
         val user = userRepository.findByIdIs(currentUserId!!) ?: return
-        userRepository.deleteByIdIs(user.getId()!!) //TODO fix, not working
+        userRepository.deleteByIdIs(user.getId()!!)
         currentDefaultUser = null
+    }
+
+    fun registerUser(username: String,
+                     avatar: String?,
+                     now: LocalDate,
+                     description: String,
+                     emailAddress: String,
+                     password: String): BaseUser {
+
+        val securedPassword = Password.getSaltedHash(password)
+        val user = BaseUser(username, avatar, now, description, emailAddress, securedPassword)
+        userRepository.saveAndFlush(user)
+        setCurrentUser(user.getId()!!)
+        return user
     }
 
     companion object {

@@ -52,7 +52,7 @@ class TeaService(private val userService: UserService,
     fun update(id: UUID, tea: Tea) {
         val existingTea = teaRepository.getTeaByIdEquals(id)
         if (existingTea != null) {
-            teaRepository.saveAndFlush(updateTeaFields(existingTea, tea))
+            updateTeaFields(existingTea, tea)
         } else {
             throw NotFoundException("Tea not found, tea id: " + tea.getId())
         }
@@ -85,7 +85,7 @@ class TeaService(private val userService: UserService,
         }
 
         tea.addAccessory(accessory)
-        teaRepository.save(tea)
+        teaRepository.saveAndFlush(tea)
     }
 
     fun removeAccessory(teaId: UUID, accessoryId: UUID) {
@@ -97,7 +97,7 @@ class TeaService(private val userService: UserService,
         }
 
         tea.removeAccessory(accessory)
-        teaRepository.save(tea)
+        teaRepository.saveAndFlush(tea)
     }
 
     fun delete(teaId: UUID) {
@@ -116,7 +116,7 @@ class TeaService(private val userService: UserService,
         val tea = teaRepository.getTeaByIdEquals(teaId)
         if (tea != null) {
             tea.brewingConfig = brewingConfiguration
-            teaRepository.save(tea)
+            teaRepository.saveAndFlush(tea)
         }
     }
 }
